@@ -19,3 +19,4 @@ scikit-learn>=1.0.2
 setuptools>=65.5.0
 wheel
 youtube-transcript-api==0.4.4
+mindmap_utils
