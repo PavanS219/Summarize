@@ -2,20 +2,41 @@ import nltk
 import graphviz
 import base64
 from io import BytesIO
-from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 from collections import defaultdict
 import streamlit as st
 
-# Download NLTK resources
+# Download NLTK resources immediately at the top of the script
+try:
+    # Try to access stopwords to see if they're available
+    from nltk.corpus import stopwords
+    stopwords.words('english')
+except LookupError:
+    # If not available, download them
+    nltk.download('stopwords')
+    nltk.download('punkt')
+
+# Backup download function with caching for Streamlit
 @st.cache_resource
 def download_nltk_resources():
-    nltk.download('punkt')
-    nltk.download('stopwords')
+    try:
+        nltk.download('punkt')
+        nltk.download('stopwords')
+        return True
+    except Exception as e:
+        st.error(f"Failed to download NLTK resources: {str(e)}")
+        return False
+
+# Call the cached download function to ensure resources are available
+download_nltk_resources()
+
+# Now it's safe to import stopwords
+from nltk.corpus import stopwords
 
 # Function to extract keywords
 def extract_keywords(text, num_keywords=10):
     """Extract the most important keywords from text using TF-IDF."""
+    # Make sure stopwords are available before using them
     stop_words = set(stopwords.words('english'))
     
     # Clean text
